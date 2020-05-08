@@ -1,9 +1,9 @@
 <template>
   <div id="app">
     <img src="./assets/logo.png" />
-    <div class="wl-gantt-demo">
+    <div class="wn-gantt-demo">
       <wlGantt
-        ref="wl-gantt-demo"
+        ref="wn-gantt-demo"
         :data="data"
         lazy
         use-real-time
@@ -26,7 +26,7 @@
 
 <script>
 // import wlGantt from "./components/gantt.vue";
-import wlGantt from "@/pages/wl-gantt";
+import wlGantt from "@/pages/wn-gantt";
 
 export default {
   name: "app",
@@ -195,7 +195,7 @@ export default {
     // 添加任务
     taskAdd(item) {
       console.log("添加任务：", item);
-      this.$refs["wl-gantt-demo"].loadTreeAdd(item.id, {
+      this.$refs["wn-gantt-demo"].loadTreeAdd(item.id, {
         pid: item.id,
         id: "###",
         name: "一轮新月",
@@ -234,7 +234,7 @@ export default {
   padding: 20px 25px 0;
 }
 
-.wl-gantt-demo {
+.wn-gantt-demo {
   margin: 40px auto;
   // width: 800px;
 }

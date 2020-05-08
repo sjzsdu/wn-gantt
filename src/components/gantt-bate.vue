@@ -1,8 +1,8 @@
 <template>
-<div class="wl-gantt"> 
+<div class="wn-gantt"> 
   <!-- 主体图形部分 -->
   <el-table
-    ref="wl-gantt"
+    ref="wn-gantt"
     :fit="fit"
     :size="size"
     :border="border"
@@ -70,14 +70,14 @@
           size="medium"
           class="u-full"
           :clearable="false"
-          ref="wl-start-date"
+          ref="wn-start-date"
           value-format="yyyy-MM-dd"
           placeholder="请选择开始日期"
         ></el-date-picker>
         <div
           v-else
           class="h-full"
-          @click="cellEdit( '_s_d_' + scope.$index, 'wl-start-date')"
+          @click="cellEdit( '_s_d_' + scope.$index, 'wn-start-date')"
         >{{timeFormat(scope.row[selfProps.startDate])}}</div> -->
       </template>
     </el-table-column>
@@ -100,14 +100,14 @@
           size="medium"
           class="u-full"
           :clearable="false"
-          ref="wl-end-date"
+          ref="wn-end-date"
           value-format="yyyy-MM-dd"
           placeholder="请选择结束日期"
         ></el-date-picker>
         <div
           v-else
           class="h-full"
-          @click="cellEdit('_e_d_' + scope.$index, 'wl-end-date')"
+          @click="cellEdit('_e_d_' + scope.$index, 'wn-end-date')"
         >{{timeFormat(scope.row[selfProps.endDate])}}</div> -->
       </template>
     </el-table-column>
@@ -128,7 +128,7 @@
           v-model="scope.row[selfProps.pre]"
           collapse-tags
           :multiple="preMultiple"
-          ref="wl-pre-select"
+          ref="wn-pre-select"
           placeholder="请选择前置任务"
           >
           <el-option
@@ -141,7 +141,7 @@
         <div
           v-else
           class="h-full"
-          @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wl-pre-select')"
+          @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wn-pre-select')"
         >{{preFormat(scope.row)}}</div> -->
       </template>
     </el-table-column>
@@ -155,7 +155,7 @@
         :key="year.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="month in year.children"
           :resizable="false"
           :key="month.id"
@@ -177,7 +177,7 @@
         :key="i.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="t in i.children"
           :resizable="false"
           :key="t.id"
@@ -199,7 +199,7 @@
         :key="i.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="t in i.children"
           :resizable="false"
           :key="t.id"
@@ -214,7 +214,7 @@
     </template>
   </el-table>
   <!-- 编辑表单部分 -->
-  <el-dialog class="wl-gantt-dialog" title="编辑任务" :modal="false" :visible.sync="task_edit_show" width="420px">
+  <el-dialog class="wn-gantt-dialog" title="编辑任务" :modal="false" :visible.sync="task_edit_show" width="420px">
   <el-form :model="task_edit_form" size="medium" label-width="110px">
     <el-form-item label="任务名称">
       <el-input v-model="task_edit_form.name" placeholder="请填写任务名称"></el-input>
@@ -409,7 +409,7 @@ export default {
     cellStyle: Function, // 单元格的 style 的回调方法
     headerRowClassName: {
       type: [Function, String],
-      default: "wl-gantt-header"
+      default: "wn-gantt-header"
     }, // 表头行的 className 的回调方法
     headerRowStyle: [Function, Object], // 表头行的 style 的回调方法
     headerCellClassName: [Function, String], // 表头单元格的 className 的回调方法
@@ -953,18 +953,18 @@ export default {
       let end_date = row[this.selfProps.endDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wl-item-on";
+        return "wn-item-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wl-item-on wl-item-full";
+        return "wn-item-on wn-item-full";
       }
       if (start) {
-        return "wl-item-on wl-item-start";
+        return "wn-item-on wn-item-start";
       }
       if (end) {
-        return "wl-item-on wl-item-end";
+        return "wn-item-on wn-item-end";
       }
     },
     /**
@@ -978,18 +978,18 @@ export default {
       let end_date = row[this.selfProps.realEndDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wl-real-on";
+        return "wn-real-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wl-real-on wl-real-full";
+        return "wn-real-on wn-real-full";
       }
       if (start) {
-        return "wl-real-on wl-real-start";
+        return "wn-real-on wn-real-start";
       }
       if (end) {
-        return "wl-real-on wl-real-end";
+        return "wn-real-on wn-real-end";
       }
     },
     // 以下是时间计算类函数 ------------------------------------------------------时间计算---------------------------------------
@@ -1565,8 +1565,8 @@ export default {
 $gantt_item: 16px;
 $gantt_item_half: 8px;
 
-.wl-gantt {
-  .wl-gantt-header > th {
+.wn-gantt {
+  .wn-gantt-header > th {
     text-align: center;
   }
 
@@ -1574,7 +1574,7 @@ $gantt_item_half: 8px;
     height: 100%;
   }
 
-  .wl-gantt-item {
+  .wn-gantt-item {
     position: relative;
     transition: all 0.3s;
     > .cell {
@@ -1587,7 +1587,7 @@ $gantt_item_half: 8px;
   }
 
   // 计划时间gantt开始
-  .wl-item-on {
+  .wn-item-on {
     position: absolute;
     top: 50%;
     left: 0;
@@ -1598,7 +1598,7 @@ $gantt_item_half: 8px;
     transition: all 0.4s;
   }
 
-  .wl-item-start {
+  .wn-item-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1614,7 +1614,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-end {
+  .wn-item-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1630,7 +1630,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-full {
+  .wn-item-full {
     left: 0;
     right: 0;
     &:before {
@@ -1661,7 +1661,7 @@ $gantt_item_half: 8px;
   // 计划时间gantt结束
 
   // 实际时间gantt开始
-  .wl-real-on {
+  .wn-real-on {
     position: absolute;
     top: 70%;
     left: 0;
@@ -1672,7 +1672,7 @@ $gantt_item_half: 8px;
     background: #faa792; //rgba(250, 167, 146, .6);
     transition: all 0.4s;
   }
-  .wl-real-start {
+  .wn-real-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1688,7 +1688,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-real-end {
+  .wn-real-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1704,7 +1704,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-real-full {
+  .wn-real-full {
     left: 0;
     right: 0;
     &:before {
@@ -1735,7 +1735,7 @@ $gantt_item_half: 8px;
   // 实际时间gantt结束
 
     // 任务编辑表单区
-  .wl-gantt-dialog{
+  .wn-gantt-dialog{
     .el-dialog__body{
       padding: 0 20px;
     }
@@ -1743,7 +1743,7 @@ $gantt_item_half: 8px;
 }
 
 .year-and-month {
-  .wl-item-start {
+  .wn-item-start {
     left: 5%;
     &:after {
       position: absolute;
@@ -1759,7 +1759,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-end {
+  .wn-item-end {
     right: 5%;
     &:after {
       position: absolute;
@@ -1775,7 +1775,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-full {
+  .wn-item-full {
     left: 5%;
     right: 5%;
     &:before {

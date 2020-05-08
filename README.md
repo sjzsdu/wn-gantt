@@ -1,107 +1,23 @@
-# wl-gantt
+# wn-gantt
 
-# 简介
+## 说明
+本组件基于[wl-gantt]()
+
+## 简介
   甘特图（Gantt chart）又称为横道图、条状图(Bar chart)、生产计划进度图。其通过条状图来显示项目，进度，和其他时间相关的系统进展的内在关系随着时间进展的情况。以提出者亨利·劳伦斯·甘特（Henry Laurence Gantt）先生的名字命名。  
-  目前市面上最有名的几个gantt插件占据江湖了非常久远的时间，它们古老又强大。 
-  但无一例外的是：它们收费或极其难用并且依赖非常古老的技术，其中有些技术现在入行的新手甚至从未听闻。  
- 【jQueryGantt】【plusgantt】【dhtmlx】  不可否认它们都非常的强大，不管是从性能还是功能性。但是大多的业务需求并不需要如此庞然大物才能满足需求。 另一方面古老的技术稀缺的文档又让开发者无从下手（收费版甚至不提供文档，而你的老板又肯定不会提供钱买下授权）。  
- `wl-gantt`出现的背景就是笔者在公司的Vue项目中使用B***Gantt插件所受到的巨大伤害：基于extjs（对于17年入行的我来说没听过）、不提供开发文档、没有中文资料、源码加密，开发全靠打印实例找属性。 `wl-gantt`是一个基于Vue及elementUi的gantt甘特图插件，是一个896的码奴在仅有的剩余的1中挤时间开发而成。   
-  它目提供的功能有：自动检查源数据是否符合project任务安排规则、结束后开始的前置任务规则、yearAndmonth|yearAndWeek|ManthAndDay日期跨度地洞切换、内置前置任务管理器。     
-  它的优点：非常简单易用，并且高度可配置，自动抹平不合格数据并给与提示，不会无缘无故产生异常。  
-  它正在逐渐长大，下个阶段，它将学会：    
-    1. yearAndMonth、monthAndDay、yearAndWeek时间跨度配置 【已完成，month及week格子起止位置待精确化】  
-    2. 内置前置任务选择器 【已完成】  
-    3. 整合树表全选联动功能 【已完成】  
-    4. 添加、移除任务回调 【已完成】        
-    4. 任务连接线   
-    5. 任务自定义悬浮提示   
-    6. 和所有你觉得需要用到的需求 
-
-### [在线演示](http://wlui.com.cn/ui/gantt) - [GitHub](https://github.com/hql7)
-
-### wl-gantt 与市面应用较广的大佬型插件对比
-
-> wl-gantt 外观简洁清爽，非常简单易用，高度可配置
-  ![wl-gantt](http://wlsy.oss-cn-hangzhou.aliyuncs.com/wl-gantt.png)
-  
-> jquery Gantt 笨重、老旧、较丑但文档还算清晰
-  ![jquery Gantt](http://wlsy.oss-cn-hangzhou.aliyuncs.com/jq-gantt.png)
-
-> js gantt 不想多说了
-  ![js gantt](http://wlsy.oss-cn-hangzhou.aliyuncs.com/js-gantt.png)
-
-> dhtmlxGantt 功能强大、全面；但是使用难度高，不切合现代框架及ui库，很难在项目中完美应用
-  ![dhtmlxGantt](http://wlsy.oss-cn-hangzhou.aliyuncs.com/dhtmlxGantt.png)
-
-> frappe-gantt 功能好少
-  ![frappe](http://wlsy.oss-cn-hangzhou.aliyuncs.com/frappe.png)
-
-> bryntum 唯一较美观的，但是可配置性差，无法和组件结合;不校验源数据正确性就报错、崩溃;规则死板不符合项目使用；收费年950$; 功能强大但文档只有简单介绍，详细用法只能控制台打印
-  ![bryntum](http://wlsy.oss-cn-hangzhou.aliyuncs.com/bryntum.png)
-
-### 更新说明
-  > 2020-04-03 懒加载
-  > 2020-02-20 更新gantt，详见版本说明1.0.1
-  > 2019-12-14 更新gantt，增加内置前置任务列，支持多选前置和单选前置，并自动校验源数据前置任务合法性。
-  > 2019-12-3 更新gantt。1表格支持[el-table](https://element.eleme.cn/#/zh-CN/component/table)大部分`Attributes`和`Events`,详细列表见下方；2名称列增加`nameFormatter`格式化内容函数支持；3日期列改为点击显示编辑输入框的形式。  
-  > 2019-12-2 更新gantt.1日期支持` yearAndMonth、monthAndDay、yearAndWeek`类型，详见`版本记录1`；2修复部分时间更改情况不回调的问题。
-
-
-#### 已支持el-table参数及事件列表
-```
-    :fit="fit"
-    :size="size"
-    :border="border"
-    :data="selfData"
-    :stripe="stripe"
-    :height="height"
-    :row-key="rowKey"
-    :row-style="rowStyle"
-    :class="dateTypeClass"
-    :cell-style="cellStyle"
-    :max-height="maxHeight"
-    :tree-props="selfProps"
-    :current-row-key="rowKey"
-    :row-class-name="rowClassName"
-    :cell-class-name="cellClassName"
-    :expand-row-keys="expandRowKeys"
-    :header-row-style="headerRowStyle"
-    :header-cell-style="headerCellStyle"
-    :default-expand-all="defaultExpandAll"
-    :header-row-class-name="headerRowClassName"
-    :highlight-current-row="highlightCurrentRow"
-    :header-cell-class-name="headerCellClassName"
-    @header-contextmenu="handleHeaderContextMenu"
-    @selection-change="handleSelectionChange"
-    @row-contextmenu="handleRowContextMenu"
-    @current-change="handleCurrentChange"
-    @cell-mouse-enter="handleMouseEnter"
-    @cell-mouse-leave="handleMouseLeave"
-    @expand-change="handleExpandChange"
-    @filter-change="handleFilterChange"
-    @cell-dblclick="handleCellDbClick"
-    @header-click="handleHeaderClick"
-    @row-dblclick="handleRowDbClick"
-    @sort-change="handleSortChange"
-    @cell-click="handleCellClick"
-    @select-all="handleSelectAll"
-    @row-click="handleRowClick"
-    @select="handleSelect"
-```
 
 ## 快速上手
 
-`npm i wl-gantt --save` 
-  
-  或  
-  
-  `npm i wl-gantt -S` 
+### 安装
+`npm i wn-gantt --save` 
 
-`import wlGantt from 'wl-gantt'`  
+### 使用
 
-`import "wl-gantt/lib/wl-gantt.css"`  
-
-`Vue.use(wlGantt)`  
+```
+import wnGantt from 'wn-gantt'
+import "wn-gantt/lib/wn-gantt.css"
+Vue.use(wnGantt)
+```  
 
 ## 文档
 ###  Attributes 参数

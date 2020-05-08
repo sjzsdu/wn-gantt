@@ -1,7 +1,7 @@
 <template>
   <el-table
-    ref="wl-gantt"
-    class="wl-gantt"
+    ref="wn-gantt"
+    class="wn-gantt"
     :fit="fit"
     :size="size"
     :border="border"
@@ -61,11 +61,11 @@
           @blur="nameBlur()"
           size="medium"
           class="u-full"
-          ref="wl-name"
+          ref="wn-name"
           placeholder="请输入名称"
         ></el-input>
         <strong v-else class="h-full">
-          <span @click="cellEdit( '_n_m_' + scope.$index, 'wl-name')">
+          <span @click="cellEdit( '_n_m_' + scope.$index, 'wn-name')">
             {{
             nameFormatter
             ?
@@ -105,14 +105,14 @@
           size="medium"
           class="u-full"
           :clearable="false"
-          ref="wl-start-date"
+          ref="wn-start-date"
           value-format="yyyy-MM-dd"
           placeholder="请选择开始日期"
         ></el-date-picker>
         <div
           v-else
           class="h-full"
-          @click="cellEdit( '_s_d_' + scope.$index, 'wl-start-date')"
+          @click="cellEdit( '_s_d_' + scope.$index, 'wn-start-date')"
         >{{timeFormat(scope.row[selfProps.startDate])}}</div>
       </template>
     </el-table-column>
@@ -134,14 +134,14 @@
           size="medium"
           class="u-full"
           :clearable="false"
-          ref="wl-end-date"
+          ref="wn-end-date"
           value-format="yyyy-MM-dd"
           placeholder="请选择结束日期"
         ></el-date-picker>
         <div
           v-else
           class="h-full"
-          @click="cellEdit('_e_d_' + scope.$index, 'wl-end-date')"
+          @click="cellEdit('_e_d_' + scope.$index, 'wn-end-date')"
         >{{timeFormat(scope.row[selfProps.endDate])}}</div>
       </template>
     </el-table-column>
@@ -161,7 +161,7 @@
           v-model="scope.row[selfProps.pre]"
           collapse-tags
           :multiple="preMultiple"
-          ref="wl-pre-select"
+          ref="wn-pre-select"
           placeholder="请选择前置任务"
         >
           <el-option
@@ -174,7 +174,7 @@
         <div
           v-else
           class="h-full"
-          @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wl-pre-select')"
+          @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wn-pre-select')"
         >{{preFormat(scope.row)}}</div>
       </template>
     </el-table-column>
@@ -188,7 +188,7 @@
         :key="year.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="month in year.children"
           :resizable="false"
           :key="month.id"
@@ -210,7 +210,7 @@
         :key="i.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="t in i.children"
           :resizable="false"
           :key="t.id"
@@ -232,7 +232,7 @@
         :key="i.id"
       >
         <el-table-column
-          class-name="wl-gantt-item"
+          class-name="wn-gantt-item"
           v-for="t in i.children"
           :resizable="false"
           :key="t.id"
@@ -404,7 +404,7 @@ export default {
     cellStyle: Function, // 单元格的 style 的回调方法
     headerRowClassName: {
       type: [Function, String],
-      default: "wl-gantt-header"
+      default: "wn-gantt-header"
     }, // 表头行的 className 的回调方法
     headerRowStyle: [Function, Object], // 表头行的 style 的回调方法
     headerCellClassName: [Function, String], // 表头单元格的 className 的回调方法
@@ -668,7 +668,7 @@ export default {
      */
     cellEdit(key, ref) {
       if (!this.edit) return;
-      if (ref === "wl-name") {
+      if (ref === "wn-name") {
         this.name_show_tooltip = false;
       }
       this.self_cell_edit = key;
@@ -963,18 +963,18 @@ export default {
       let end_date = row[this.selfProps.endDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wl-item-on";
+        return "wn-item-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wl-item-on wl-item-full";
+        return "wn-item-on wn-item-full";
       }
       if (start) {
-        return "wl-item-on wl-item-start";
+        return "wn-item-on wn-item-start";
       }
       if (end) {
-        return "wl-item-on wl-item-end";
+        return "wn-item-on wn-item-end";
       }
     },
     /**
@@ -988,18 +988,18 @@ export default {
       let end_date = row[this.selfProps.realEndDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wl-real-on";
+        return "wn-real-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wl-real-on wl-real-full";
+        return "wn-real-on wn-real-full";
       }
       if (start) {
-        return "wl-real-on wl-real-start";
+        return "wn-real-on wn-real-start";
       }
       if (end) {
-        return "wl-real-on wl-real-end";
+        return "wn-real-on wn-real-end";
       }
     },
     // 以下是时间计算类函数 ------------------------------------------------------时间计算---------------------------------------
@@ -1508,7 +1508,7 @@ export default {
         // 父元素选中全选所有子孙元素
         // for (let item of val) {
         row._all_children.forEach(i => {
-          this.$refs["wl-gantt"].toggleRowSelection(i, true);
+          this.$refs["wn-gantt"].toggleRowSelection(i, true);
         });
         // }
         // 子元素全选向上查找所有满足条件的祖先元素
@@ -1520,7 +1520,7 @@ export default {
                 it => it[this.selfProps.id] == item[this.selfProps.id]
               );
             });
-          if (reg) this.$refs["wl-gantt"].toggleRowSelection(parents, true);
+          if (reg) this.$refs["wn-gantt"].toggleRowSelection(parents, true);
         });
       } else {
         // 非选中将所有子孙元素及支线上祖先元素清除
@@ -1529,7 +1529,7 @@ export default {
           ...flattenDeepParents([row], "_parent")
         ];
         for (let item of cancel_data) {
-          this.$refs["wl-gantt"].toggleRowSelection(item, false);
+          this.$refs["wn-gantt"].toggleRowSelection(item, false);
         }
       }
     },
@@ -1545,7 +1545,7 @@ export default {
     handleSelectAll(val) {
       let is_check = val.length > 0;
       this.self_data_list.forEach(i => {
-        this.$refs["wl-gantt"].toggleRowSelection(i, is_check);
+        this.$refs["wn-gantt"].toggleRowSelection(i, is_check);
       });
       this.$emit("select-all", val);
     }, // 当用户手动勾选全选 Checkbox 时触发的事件
@@ -1614,8 +1614,8 @@ export default {
 $gantt_item: 16px;
 $gantt_item_half: 8px;
 
-.wl-gantt {
-  .wl-gantt-header > th {
+.wn-gantt {
+  .wn-gantt-header > th {
     text-align: center;
   }
 
@@ -1623,7 +1623,7 @@ $gantt_item_half: 8px;
     height: 100%;
   }
 
-  .wl-gantt-item {
+  .wn-gantt-item {
     position: relative;
     transition: all 0.3s;
     > .cell {
@@ -1636,7 +1636,7 @@ $gantt_item_half: 8px;
   }
 
   // 计划时间gantt开始
-  .wl-item-on {
+  .wn-item-on {
     position: absolute;
     top: 50%;
     left: 0;
@@ -1647,7 +1647,7 @@ $gantt_item_half: 8px;
     transition: all 0.4s;
   }
 
-  .wl-item-start {
+  .wn-item-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1663,7 +1663,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-end {
+  .wn-item-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1679,7 +1679,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-full {
+  .wn-item-full {
     left: 0;
     right: 0;
     &:before {
@@ -1710,7 +1710,7 @@ $gantt_item_half: 8px;
   // 计划时间gantt结束
 
   // 实际时间gantt开始
-  .wl-real-on {
+  .wn-real-on {
     position: absolute;
     top: 70%;
     left: 0;
@@ -1720,7 +1720,7 @@ $gantt_item_half: 8px;
     background: #faa792; //rgba(250, 167, 146, .6);
     transition: all 0.4s;
   }
-  .wl-real-start {
+  .wn-real-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1736,7 +1736,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-real-end {
+  .wn-real-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1752,7 +1752,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-real-full {
+  .wn-real-full {
     left: 0;
     right: 0;
     &:before {
@@ -1811,7 +1811,7 @@ $gantt_item_half: 8px;
 }
 
 .year-and-month {
-  .wl-item-start {
+  .wn-item-start {
     left: 5%;
     &:after {
       position: absolute;
@@ -1827,7 +1827,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-end {
+  .wn-item-end {
     right: 5%;
     &:after {
       position: absolute;
@@ -1843,7 +1843,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wl-item-full {
+  .wn-item-full {
     left: 5%;
     right: 5%;
     &:before {

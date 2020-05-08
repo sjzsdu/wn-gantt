@@ -1,4 +1,4 @@
-import wlGantt from "./wl-gantt/";
+import wlGantt from "./wn-gantt/";
 
 const components = [wlGantt];
 
