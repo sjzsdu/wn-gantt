@@ -4,7 +4,7 @@
  * description: 一个数组操作函数库
  * date：2019-01-22
  */
-
+/* eslint-disable */
 "use strict";
 import Vue from "vue";
 import dayjs from 'dayjs' // 导入日期js

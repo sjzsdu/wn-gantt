@@ -1,6 +1,6 @@
-import wlGantt from "./wn-gantt/";
+import wnGantt from "./wn-gantt/";
 
-const components = [wlGantt];
+const components = [wnGantt];
 
 const install = function (Vue) {
   components.forEach(component => {
@@ -14,5 +14,5 @@ if (typeof window !== "undefined" && window.Vue) {
 
 export default {
   install,
-  wlGantt,
+  wnGantt,
 };

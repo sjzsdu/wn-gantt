@@ -1,258 +1,225 @@
 <template>
-  <el-table
-    ref="wn-gantt"
-    class="wn-gantt"
-    :fit="fit"
-    :size="size"
-    :load="load"
-    :lazy="lazy"
-    :border="border"
-    :data="selfData"
-    :stripe="stripe"
-    :height="height"
-    :row-key="rowKey"
-    :row-style="rowStyle"
-    :class="dateTypeClass"
-    :cell-style="cellStyle"
-    :max-height="maxHeight"
-    :tree-props="selfProps"
-    :current-row-key="rowKey"
-    :row-class-name="rowClassName"
-    :cell-class-name="cellClassName"
-    :expand-row-keys="expandRowKeys"
-    :header-row-style="headerRowStyle"
-    :header-cell-style="headerCellStyle"
-    :default-expand-all="defaultExpandAll"
-    :header-row-class-name="headerRowClassName"
-    :highlight-current-row="highlightCurrentRow"
-    :header-cell-class-name="headerCellClassName"
-    @header-contextmenu="handleHeaderContextMenu"
-    @selection-change="handleSelectionChange"
-    @row-contextmenu="handleRowContextMenu"
-    @current-change="handleCurrentChange"
-    @cell-mouse-enter="handleMouseEnter"
-    @cell-mouse-leave="handleMouseLeave"
-    @expand-change="handleExpandChange"
-    @filter-change="handleFilterChange"
-    @cell-dblclick="handleCellDbClick"
-    @header-click="handleHeaderClick"
-    @row-dblclick="handleRowDbClick"
-    @sort-change="handleSortChange"
-    @cell-click="handleCellClick"
-    @select-all="handleSelectAll"
-    @row-click="handleRowClick"
-    @select="handleSelect"
-  >
-    <template v-if="!ganttOnly">
-      <slot name="prv"></slot>
-      <el-table-column v-if="useCheckColumn" fixed type="selection" width="55" align="center"></el-table-column>
-      <el-table-column v-if="useIndexColumn" fixed type="index" width="50" label="序号"></el-table-column>
-      <el-table-column
-        fixed
-        label="名称"
-        min-width="200"
-        class-name="name-col"
-        :prop="selfProps.name"
-        :formatter="nameFormatter"
-        :show-overflow-tooltip="name_show_tooltip"
-      >
-        <template slot-scope="scope">
-          <el-input
-            v-if="self_cell_edit === '_n_m_' + scope.$index"
-            v-model="scope.row[selfProps.name]"
-            @change="nameChange(scope.row)"
-            @blur="nameBlur()"
-            size="medium"
-            class="u-full"
-            ref="wn-name"
-            placeholder="请输入名称"
-          ></el-input>
-          <strong v-else class="h-full">
-            <span @click="cellEdit( '_n_m_' + scope.$index, 'wn-name')">
-              {{
-              nameFormatter
-              ?
-              nameFormatter(scope.row, scope.column, scope.treeNode,scope.$index)
-              :
-              scope.row[selfProps.name]
-              }}
-            </span>
-            <span class="name-col-edit">
-              <i
-                class="el-icon-remove-outline name-col-icon task-remove"
-                @click="emitTaskRemove(scope.row)"
-              ></i>
-              <i
-                class="el-icon-circle-plus-outline name-col-icon task-add"
-                @click="emitTaskAdd(scope.row)"
-              ></i>
-            </span>
-          </strong>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :resizable="false"
-        fixed
-        width="160"
-        align="center"
-        :prop="selfProps.startDate"
-        label="开始日期"
-      >
-        <template slot-scope="scope">
-          <el-date-picker
-            v-if="self_cell_edit === '_s_d_' + scope.$index"
-            v-model="scope.row[selfProps.startDate]"
-            @change="startDateChange(scope.row)"
-            @blur="self_cell_edit = null"
-            type="date"
-            size="medium"
-            class="u-full"
-            :clearable="false"
-            ref="wn-start-date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择开始日期"
-          ></el-date-picker>
-          <div
-            v-else
-            class="h-full"
-            @click="cellEdit( '_s_d_' + scope.$index, 'wn-start-date')"
-          >{{timeFormat(scope.row[selfProps.startDate])}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        fixed
-        :resizable="false"
-        width="160"
-        align="center"
-        :prop="selfProps.endDate"
-        label="结束日期"
-      >
-        <template slot-scope="scope">
-          <el-date-picker
-            v-if="self_cell_edit === '_e_d_' + scope.$index"
-            v-model="scope.row[selfProps.endDate]"
-            @change="endDateChange(scope.row)"
-            @blur="self_cell_edit = null"
-            type="date"
-            size="medium"
-            class="u-full"
-            :clearable="false"
-            ref="wn-end-date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择结束日期"
-          ></el-date-picker>
-          <div
-            v-else
-            class="h-full"
-            @click="cellEdit('_e_d_' + scope.$index, 'wn-end-date')"
-          >{{timeFormat(scope.row[selfProps.endDate])}}</div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-if="usePreColumn"
-        align="center"
-        min-width="140"
-        label="前置任务"
-        show-overflow-tooltip
-        :prop="selfProps.endDate"
-      >
-        <template slot-scope="scope">
-          <!-- @blur="self_cell_edit = null" @blur="preEditBlur" -->
-          <el-select
-            v-if="self_cell_edit === '_p_t_' + scope.$index"
-            @change="preChange"
-            v-model="scope.row[selfProps.pre]"
-            collapse-tags
-            :multiple="preMultiple"
-            ref="wn-pre-select"
-            placeholder="请选择前置任务"
+  <div>
+    <el-table
+      ref="wn-gantt"
+      class="wn-gantt"
+      :fit="fit"
+      :size="size"
+      :load="load"
+      :lazy="lazy"
+      :border="border"
+      :data="selfData"
+      :stripe="stripe"
+      :height="height"
+      :row-key="rowKey"
+      :row-style="rowStyle"
+      :class="dateTypeClass"
+      :cell-style="cellStyle"
+      :max-height="maxHeight"
+      :tree-props="selfProps"
+      :current-row-key="rowKey"
+      :row-class-name="rowClassName"
+      :cell-class-name="cellClassName"
+      :expand-row-keys="expandRowKeys"
+      :header-row-style="headerRowStyle"
+      :header-cell-style="headerCellStyle"
+      :default-expand-all="defaultExpandAll"
+      :header-row-class-name="headerRowClassName"
+      :highlight-current-row="highlightCurrentRow"
+      :header-cell-class-name="headerCellClassName"
+      @header-contextmenu="handleHeaderContextMenu"
+      @selection-change="handleSelectionChange"
+      @row-contextmenu="handleRowContextMenu"
+      @current-change="handleCurrentChange"
+      @cell-mouse-enter="handleMouseEnter"
+      @cell-mouse-leave="handleMouseLeave"
+      @expand-change="handleExpandChange"
+      @filter-change="handleFilterChange"
+      @cell-dblclick="handleCellDbClick"
+      @header-click="handleHeaderClick"
+      @row-dblclick="handleRowDbClick"
+      @sort-change="handleSortChange"
+      @cell-click="handleCellClick"
+      @select-all="handleSelectAll"
+      @row-click="handleRowClick"
+      @select="handleSelect"
+    >
+      <template v-if="!ganttOnly">
+        <slot name="prv"></slot>
+        <el-table-column v-if="useCheckColumn" fixed type="selection" width="55" align="center"></el-table-column>
+        <el-table-column v-if="useIndexColumn" fixed type="index" width="50" label="序号"></el-table-column>
+        <el-table-column
+          fixed
+          label="名称"
+          min-width="200"
+          class-name="name-col"
+          :prop="selfProps.name"
+          :formatter="nameFormatter"
+          :show-overflow-tooltip="name_show_tooltip"
+        >
+          <template slot-scope="scope">
+            <el-input
+              v-if="self_cell_edit === '_n_m_' + scope.$index"
+              v-model="scope.row[selfProps.name]"
+              @change="nameChange(scope.row)"
+              @blur="nameBlur()"
+              size="medium"
+              class="u-full"
+              ref="wl-name"
+              placeholder="请输入名称"
+            ></el-input>
+            <strong v-else class="h-full">
+              <span @click="cellEdit( '_n_m_' + scope.$index, 'wl-name')">
+                {{
+                nameFormatter
+                ?
+                nameFormatter(scope.row, scope.column, scope.treeNode,scope.$index)
+                :
+                scope.row[selfProps.name]
+                }}
+              </span>
+              <span class="name-col-edit">
+                <i
+                  class="el-icon-remove-outline name-col-icon task-remove"
+                  @click="emitTaskRemove(scope.row)"
+                ></i>
+                <i
+                  class="el-icon-circle-plus-outline name-col-icon task-add"
+                  @click="emitTaskAdd(scope.row)"
+                ></i>
+              </span>
+            </strong>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :resizable="false"
+          fixed
+          width="160"
+          align="center"
+          :prop="selfProps.startDate"
+          label="开始时间"
+        >
+          <template slot-scope="scope">
+            <el-date-picker
+              v-if="self_cell_edit === '_s_d_' + scope.$index"
+              v-model="scope.row[selfProps.startDate]"
+              @change="startDateChange(scope.row)"
+              @blur="self_cell_edit = null"
+              type="datetime"
+              size="medium"
+              class="u-full"
+              value-format="yyyy-MM-dd hh:mm:ss"
+              :clearable="false"
+              ref="wl-start-date"
+              placeholder="请选择开始时间"
+            ></el-date-picker>
+            <div
+              v-else
+              class="h-full"
+              @click="cellEdit( '_s_d_' + scope.$index, 'wl-start-date')"
+            >{{timeFormat(scope.row[selfProps.startDate])}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          fixed
+          :resizable="false"
+          width="160"
+          align="center"
+          :prop="selfProps.endDate"
+          label="结束时间"
+        >
+          <template slot-scope="scope">
+            <el-date-picker
+              v-if="self_cell_edit === '_e_d_' + scope.$index"
+              v-model="scope.row[selfProps.endDate]"
+              @change="endDateChange(scope.row)"
+              @blur="self_cell_edit = null"
+              type="datetime"
+              size="medium"
+              class="u-full"
+              :clearable="false"
+              ref="wl-end-date"
+              value-format="yyyy-MM-dd hh:mm:ss"
+              placeholder="请选择结束时间"
+            ></el-date-picker>
+            <div
+              v-else
+              class="h-full"
+              @click="cellEdit('_e_d_' + scope.$index, 'wl-end-date')"
+            >{{timeFormat(scope.row[selfProps.endDate])}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="usePreColumn"
+          align="center"
+          min-width="140"
+          label="前置任务"
+          show-overflow-tooltip
+          :prop="selfProps.endDate"
+        >
+          <template slot-scope="scope">
+            <!-- @blur="self_cell_edit = null" @blur="preEditBlur" -->
+            <el-select
+              v-if="self_cell_edit === '_p_t_' + scope.$index"
+              @change="preChange"
+              v-model="scope.row[selfProps.pre]"
+              collapse-tags
+              :multiple="preMultiple"
+              ref="wl-pre-select"
+              placeholder="请选择前置任务"
+            >
+              <el-option
+                v-for="item in pre_options"
+                :key="item[selfProps.id]"
+                :label="item[selfProps.name]"
+                :value="item[selfProps.id]"
+              ></el-option>
+            </el-select>
+            <div
+              v-else
+              class="h-full"
+              @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wl-pre-select')"
+            >{{preFormat(scope.row)}}</div>
+          </template>
+        </el-table-column>
+        <slot></slot>
+      </template>
+
+      <template>
+        <el-table-column
+          :resizable="false"
+          v-for="(i,findex) in ganttTitleDate"
+          :label="i.full_date"
+          :key="i.id"
+        >
+          <el-table-column
+            class-name="wn-gantt-item"
+            v-for="(t,sindex) in i.children"
+            :resizable="false"
+            :key="t.id"
+            :width="cellwidth"
+            :label="t.name"
           >
-            <el-option
-              v-for="item in pre_options"
-              :key="item[selfProps.id]"
-              :label="item[selfProps.name]"
-              :value="item[selfProps.id]"
-            ></el-option>
-          </el-select>
-          <div
-            v-else
-            class="h-full"
-            @click="preCellEdit(scope.row, '_p_t_' + scope.$index, 'wn-pre-select')"
-          >{{preFormat(scope.row)}}</div>
-        </template>
-      </el-table-column>
-      <slot></slot>
-    </template>
-    <!-- year and mouth gantt -->
-    <template v-if="self_date_type === 'yearAndMonth'">
-      <el-table-column
-        :resizable="false"
-        v-for="year in ganttTitleDate"
-        :label="year.name"
-        :key="year.id"
-      >
-        <el-table-column
-          class-name="wn-gantt-item"
-          v-for="month in year.children"
-          :resizable="false"
-          :key="month.id"
-          :label="month.name"
-        >
-          <template slot-scope="scope">
-            <div :class="dayGanttType(scope.row, month.full_date, 'months')"></div>
-            <div v-if="useRealTime" :class="realDayGanttType(scope.row, month.full_date, 'months')"></div>
-          </template>
+            <template slot-scope="scope">
+              <div v-if="findex===0 && sindex===0" class="gantt" :style="scope.row | ganttbar">
+                <div :style="bgstyle" class="gantt-bar" @mousedown.stop="bardown($event,scope.row)">{{scope.row.name}}
+                  <div class="controller left" @mousedown.stop="startdown($event,scope.row)"></div>
+                  <div class="controller right" @mousedown.stop="enddown($event,scope.row)"></div>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
         </el-table-column>
-      </el-table-column>
-    </template>
-    <!-- year and week gantt -->
-    <template v-else-if="self_date_type === 'yearAndWeek'">
-      <el-table-column
-        :resizable="false"
-        v-for="i in ganttTitleDate"
-        :label="i.full_date"
-        :key="i.id"
-      >
-        <el-table-column
-          class-name="wn-gantt-item"
-          v-for="t in i.children"
-          :resizable="false"
-          :key="t.id"
-          :label="t.name"
-        >
-          <template slot-scope="scope">
-            <div :class="dayGanttType(scope.row, t.full_date, 'week')"></div>
-            <div v-if="useRealTime" :class="realDayGanttType(scope.row, t.full_date, 'week')"></div>
-          </template>
-        </el-table-column>
-      </el-table-column>
-    </template>
-    <!-- mouth and day gantt -->
-    <template v-else>
-      <el-table-column
-        :resizable="false"
-        v-for="i in ganttTitleDate"
-        :label="i.full_date"
-        :key="i.id"
-      >
-        <el-table-column
-          class-name="wn-gantt-item"
-          v-for="t in i.children"
-          :resizable="false"
-          :key="t.id"
-          :label="t.name"
-        >
-          <template slot-scope="scope">
-            <div :class="dayGanttType(scope.row, t.full_date)"></div>
-            <div v-if="useRealTime" :class="realDayGanttType(scope.row, t.full_date)"></div>
-          </template>
-        </el-table-column>
-      </el-table-column>
-    </template>
-  </el-table>
+      </template>
+
+    </el-table>
+
+  </div>
+  
 </template>
 
 <script>
+/* eslint-disable */
 import dayjs from "dayjs"; // 导入日期js
 const uuidv4 = require("uuid/v4"); // 导入uuid生成插件
 import isBetween from "dayjs/plugin/isBetween";
@@ -267,7 +234,7 @@ import {
 } from "@/util/array.js"; // 导入数组操作函数
 
 export default {
-  name: "wlGantt",
+  name: "wnGantt",
   data() {
     return {
       self_start_date: "", // 项目开始时间
@@ -282,10 +249,30 @@ export default {
       pre_options: [], // 可选前置节点
       name_show_tooltip: true, // 名称列是否开启超出隐藏
       update: true, // 更新视图
-      selectionList: [] // 多选选中数据
+      selectionList: [], // 多选选中数据
+      dragStatus:0,
+      selfData:[]
     };
   },
+  filters:{
+    ganttbar(row){
+      return {
+        left:`${row.left}px`,
+        width:`${row.width}px`,
+      }
+    }
+  },
   props: {
+    // 甘特柱样式
+    bgstyle:{
+      type:Object,
+      default(){return { background:'blue' }}
+    },
+    // 单位长度
+    cellwidth:{
+      type:Number,
+      default:80
+    },
     // gantt数据
     data: {
       type: Array,
@@ -296,7 +283,7 @@ export default {
     // 日期类型
     dateType: {
       type: String,
-      default: "yearAndMonth" // monthAndDay,yearAndMonth,yearAndWeek
+      default: "monthAndDay" // monthAndDay,dayAndMonth
     },
     // 树表配置项
     props: Object,
@@ -436,71 +423,38 @@ export default {
     } */
   },
   computed: {
-    // 甘特图标题日期分配
-    ganttTitleDate() {
-      // 分解开始和结束日期
-      let start_date_spilt = dayjs(this.self_start_date)
-        .format("YYYY-M-D")
-        .split("-");
-      let end_date_spilt = dayjs(this.self_end_date)
-        .format("YYYY-M-D")
-        .split("-");
-      let start_year = Number(start_date_spilt[0]);
-      let start_mouth = Number(start_date_spilt[1]);
-      let end_year = Number(end_date_spilt[0]);
-      let end_mouth = Number(end_date_spilt[1]);
-      // 自动更新日期类型以适应任务时间范围跨度
-      if (this.autoGanttDateType) {
-        // 计算日期跨度
-        let mouth_diff = this.timeDiffTime(
-          this.self_start_date,
-          this.self_end_date,
-          "months"
-        );
-        if (mouth_diff > 12) {
-          // 12个月以上的分到yearAndMouth
-          this.self_date_type = "yearAndMonth";
-        } else if (mouth_diff > 2) {
-          // 2个月以上的分到yearAndWeek
-          this.self_date_type = "yearAndWeek";
-        } else {
-          this.self_date_type = "monthAndDay";
-        }
-      }
-      // 不自动更新日期类型，以dateType固定展示
-      if (this.self_date_type === "yearAndWeek") {
-        return this.yearAndWeekTitleDate(
-          start_year,
-          start_mouth,
-          end_year,
-          end_mouth
-        );
-      } else if (this.self_date_type === "monthAndDay") {
-        return this.mouthAndDayTitleDate(
-          start_year,
-          start_mouth,
-          end_year,
-          end_mouth
-        );
+    objstartDate(){
+      return new Date(this.self_start_date + ' 00:00:00')
+    },
+    objendDate(){
+      return new Date(this.self_end_date + ' 23:59:59')
+    },
+    totalwidth(){
+      return this.getPosition(this.objstartDate,this.objendDate)
+    },
+    /**
+     * 获取一个单元格的时间戳大小
+     */
+    cellTimespan(){
+      if (this.self_date_type === "monthAndDay") {
+        return 24*60*60
       } else {
-        return this.yearAndMouthTitleDate(
-          start_year,
-          start_mouth,
-          end_year,
-          end_mouth
-        );
+        return 60*60
       }
     },
-    // 数据
-    selfData() {
-      let _data = this.data || [];
-      // 生成一维数据
-      this.self_data_list = flattenDeep(_data, this.selfProps.children);
-      // 处理源数据合法性
-      this.handleData(_data);
-      // 处理前置依赖
-      this.handleDependentStore();
-      return _data;
+    
+    // 甘特图标题日期分配
+    /**
+     * 根据起止时间生成二级表头，将时间转换为时间戳，根据时间戳来确定
+     * 
+     */
+    ganttTitleDate() {
+      // 不自动更新日期类型，以dateType固定展示
+      if (this.self_date_type === "monthAndDay") {
+        return this.monthAndDayTitle();
+      } else {
+        return this.dayAndHourTitle();
+      }
     },
     // 树表配置项
     selfProps() {
@@ -532,40 +486,166 @@ export default {
     }
   },
   methods: {
+    startdown(e,row){
+      const odiv = e.target;        //获取目标元素
+      //算出鼠标相对元素的位置
+      const disX = e.clientX;
+      const objDate = new Date(row.startDate)
+      const {left,width} = row
+      document.onmousemove = (e)=>{       //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let moveleft = e.clientX - disX;
+        //移动当前元素
+        if(moveleft > width) moveleft = width
+        row.left = left + moveleft
+        row.width = width - moveleft
+        if(row.left < 0) row.left = 0
+        if(row.left + row.width > this.totalwidth) row.width = this.totalwidth - row.left
+      };
+      document.onmouseup = (e) => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+          // 改变目标的时间大小
+        const span = Math.round((row.left-left) * this.cellTimespan / this.cellwidth) * 1000
+        row.startDate = this.timespanToStr(Math.round(objDate.getTime()) + span)
+        this.emitTimeChange(row)
+      };
+    },
+    /**
+     * 时间戳转字符串
+     */
+    timespanToStr(timestamp){
+      const d = new Date(timestamp)
+      return (d.getFullYear()) + "-" + 
+        (d.getMonth() + 1) + "-" +
+        (d.getDate()) + " " + 
+        (d.getHours()) + ":" + 
+        (d.getMinutes()) + ":" + 
+        (d.getSeconds());
+    },
+    bardown(e,row){
+      const odiv = e.target;        //获取目标元素
+      //算出鼠标相对元素的位置
+      const disX = e.clientX;
+      const objstartDate = new Date(row.startDate)
+      const objendDate = new Date(row.endDate)
+      const {left,width} = row
+      document.onmousemove = (e)=>{       //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let moveleft = e.clientX - disX;
+        //移动当前元素
+        if(left+moveleft > this.totalwidth) moveleft = this.totalwidth - left
+        row.left = left + moveleft
+        if(row.left < 0) row.left = 0
+      };
+      document.onmouseup = (e) => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+          // 改变目标的时间大小
+        const span = Math.round((row.left-left) * this.cellTimespan / this.cellwidth) * 1000
+        row.startDate = this.timespanToStr(Math.round(objstartDate.getTime()) + span)
+        row.endDate = this.timespanToStr(Math.round(objendDate.getTime()) + span)
+        this.emitTimeChange(row)
+      };
+    },
+    enddown(e,row){
+      const odiv = e.target;        //获取目标元素
+      //算出鼠标相对元素的位置
+      const disX = e.clientX;
+      const objDate = new Date(row.endDate)
+      const {left,width} = row
+      document.onmousemove = (e)=>{       //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let moveleft = e.clientX - disX;
+        //移动当前元素
+        if(moveleft + width < 0) moveleft = -width
+        row.width = width + moveleft
+        if(row.left + row.width > this.totalwidth) row.width = this.totalwidth - row.left
+      };
+      document.onmouseup = (e) => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+          // 改变目标的时间大小
+        const span = Math.round((row.width-width) * this.cellTimespan / this.cellwidth) * 1000
+        row.endDate = this.timespanToStr(Math.round(objDate.getTime()) + span)
+        this.emitTimeChange(row)
+      };
+    },
+
+    // 返回这样的数据结构 [{full_date:'3月'，id：1，children:[{id:1,name:'1日'}]}]，按天的间隔增加，时间是确定的，按月的间隔增加，时间是不确定的
+    monthAndDayTitle(){
+      let start_date_spilt = dayjs(this.self_start_date)
+        .format("YYYY-M-D")
+        .split("-");
+      let end_date_spilt = dayjs(this.self_end_date)
+        .format("YYYY-M-D")
+        .split("-");
+      let start_year = Number(start_date_spilt[0]);
+      let start_mouth = Number(start_date_spilt[1]);
+      let end_year = Number(end_date_spilt[0]);
+      let end_mouth = Number(end_date_spilt[1]);
+      return this.mouthAndDayTitleDate(
+        start_year,
+        start_mouth,
+        end_year,
+        end_mouth
+      );
+    },
+
+    /**
+     * 根据时间对象，返回在甘特图的位置，单位px
+     */
+    getPosition(startDate,endDate){
+      const cellTimespan = this.cellTimespan
+      const timespan = Math.round((endDate.getTime() - startDate.getTime())/1000)
+      return Math.round((timespan / cellTimespan) * this.cellwidth)
+    },
+
+
+    /**
+     * 日期小时的形式
+     * 已起始日期开始起算，隔24小时 
+     */
+    dayAndHourTitle(){
+      let start = Math.round(this.objstartDate.getTime()/1000);
+      let end = Math.round(this.objendDate.getTime()/1000);
+      const days = []
+      while(start < end){
+        const objDate = new Date(start)
+        days.push({
+          name: `${objDate.getMonth() + 1}月${objDate.getDate()}日`,
+          date: `${objDate.getDate()}日`,
+          full_date: `${objDate.getMonth() + 1}月${objDate.getDate()}日`,
+          children: this.getHours(start),
+          id: uuidv4()
+        })
+        start += 24*60*60
+      }
+      return days
+    },
+    /**
+     * 获取小时数据
+     * */ 
+    getHours(timespan){
+      const hours = [];
+      for(let i=1;i<=24;i++){
+        let objDate = new Date(timespan + i*60*60)
+        hours.push({
+          name: `${i}点`,
+          date: `${objDate.getDate()}日${objDate.getHours()}时`,
+          full_date: `${objDate.getMonth() + 1}月${objDate.getDate()}日${objDate.getHours()}时`,
+          id: uuidv4()
+        })
+      }
+      return hours;
+    },
     /**
      * 开始时间改变
      * row: object 当前行数据
      */
     startDateChange(row) {
-      // 如果将开始时间后移，结束时间也应后移
-      let _delay = this.timeIsBefore(
-        row._oldStartDate,
-        row[this.selfProps.startDate]
-      );
-      if (_delay) {
-        row[this.selfProps.endDate] = this.timeAdd(
-          row[this.selfProps.endDate],
-          row._cycle
-        );
-      }
-      // 如果开始早于项目开始，则把项目开始提前
-      let _early_project_start = this.timeIsBefore(
-        row[this.selfProps.startDate],
-        this.self_start_date
-      );
-      if (_early_project_start) {
-        this.self_start_date = row[this.selfProps.startDate];
-      }
-      this.emitTimeChange(row);
-    },
-    /**
-     * 结束时间改变
-     * row: object 当前行数据
-     */
-    endDateChange(row) {
-      this.emitTimeChange(row);
       // 如果开始晚于结束，提示
-      /* if (
+      if (
         this.timeIsBefore(
           row[this.selfProps.endDate],
           row[this.selfProps.startDate]
@@ -578,7 +658,32 @@ export default {
           type: "error"
         });
         return;
-      } */
+      }
+      Object.assign(row,this.makeLeftWidth(row))
+      this.emitTimeChange(row);
+    },
+    /**
+     * 结束时间改变
+     * row: object 当前行数据
+     */
+    endDateChange(row) {
+      // 如果开始晚于结束，提示
+      if (
+        this.timeIsBefore(
+          row[this.selfProps.endDate],
+          row[this.selfProps.startDate]
+        )
+      ) {
+        row[this.selfProps.startDate] = row._oldStartDate;
+        this.$message({
+          showClose: true,
+          message: "结束时间不可以早于开始时间",
+          type: "error"
+        });
+        return;
+      }
+      Object.assign(row,this.makeLeftWidth(row))
+      this.emitTimeChange(row);
     },
     /**
      * 前置任务改变
@@ -687,7 +792,7 @@ export default {
      */
     cellEdit(key, ref) {
       if (!this.edit) return;
-      if (ref === "wn-name") {
+      if (ref === "wl-name") {
         this.name_show_tooltip = false;
       }
       this.self_cell_edit = key;
@@ -882,6 +987,48 @@ export default {
       );
       return start_mouths.concat(end_mouths);
     },
+
+    /**
+     * 日-时模式gantt标题
+     * start_year: 起始年
+     * start_mouth：起始月
+     * end_year：结束年
+     * end_mouth：结束月
+     */
+    mouthAndDayTitleDate(start_year, start_mouth, end_year, end_mouth) {
+      // 处理年份
+      let year_diff = end_year - start_year;
+      // 只存在同年或前后年的情况
+      if (year_diff === 0) {
+        // 年间隔为同一年
+        let isLeap = this.isLeap(start_year); // 是否闰年
+        let mouths = this.generationMonths(
+          start_year,
+          start_mouth,
+          end_mouth + 1,
+          isLeap
+        ); // 处理月份
+        return mouths;
+      }
+      // 处理开始月份
+      let startIsLeap = this.isLeap(start_year);
+      let start_mouths = this.generationMonths(
+        start_year,
+        start_mouth,
+        13,
+        startIsLeap
+      );
+      // 处理结束月份
+      let endIsLeap = this.isLeap(end_year);
+      let end_mouths = this.generationMonths(
+        end_year,
+        1,
+        end_mouth + 1,
+        endIsLeap
+      );
+      return start_mouths.concat(end_mouths);
+    },
+
     /**
      * 生成月份函数
      * year: Number 当前年份
@@ -939,6 +1086,7 @@ export default {
       let dates_num = big_month ? 32 : small_month ? 31 : isLeap ? 30 : 29;
       let days = [];
       if (week) {
+        
         let _day = 1; // 从周日开始
         let _start_day_inweek = this.timeInWeek(`${year}-${month}-1`);
         if (_start_day_inweek !== 0) {
@@ -953,7 +1101,18 @@ export default {
           });
         }
       } else {
-        for (let i = 1; i < dates_num; i++) {
+        // 如果当前月份就是刻度上的月份，那么从该月份开始
+        let st = 1
+        if (this.objstartDate.getFullYear() == year && this.objstartDate.getMonth() == month-1) {
+          st = this.objstartDate.getDate();
+        }
+        // 如果当前月份是结束月份，那么遍历到该月为止
+        let et = dates_num
+        if (this.objendDate.getFullYear() == year && this.objendDate.getMonth() == month-1) {
+          et = this.objendDate.getDate();
+        }
+
+        for (let i = st; i < et; i++) {
           days.push({
             date: i,
             name: `${i}日`,
@@ -982,18 +1141,18 @@ export default {
       let end_date = row[this.selfProps.endDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wn-item-on";
+        return "wl-item-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wn-item-on wn-item-full";
+        return "wl-item-on wl-item-full";
       }
       if (start) {
-        return "wn-item-on wn-item-start";
+        return "wl-item-on wl-item-start";
       }
       if (end) {
-        return "wn-item-on wn-item-end";
+        return "wl-item-on wl-item-end";
       }
     },
     /**
@@ -1007,18 +1166,18 @@ export default {
       let end_date = row[this.selfProps.realEndDate];
       let between = dayjs(date).isBetween(start_date, end_date, unit);
       if (between) {
-        return "wn-real-on";
+        return "wl-real-on";
       }
       let start = dayjs(start_date).isSame(date, unit);
       let end = dayjs(end_date).isSame(date, unit);
       if (start && end) {
-        return "wn-real-on wn-real-full";
+        return "wl-real-on wl-real-full";
       }
       if (start) {
-        return "wn-real-on wn-real-start";
+        return "wl-real-on wl-real-start";
       }
       if (end) {
-        return "wn-real-on wn-real-end";
+        return "wl-real-on wl-real-end";
       }
     },
     // 以下是时间计算类函数 ------------------------------------------------------时间计算---------------------------------------
@@ -1056,7 +1215,7 @@ export default {
      * date 需要格式化的数据
      * format 格式化的格式
      */
-    timeFormat(date, format = "YYYY-MM-DD") {
+    timeFormat(date, format = "YYYY-MM-DD HH:mm:ss") {
       return date ? dayjs(date).format(format) : this.emptyCellText;
     },
     /**
@@ -1654,23 +1813,96 @@ export default {
         id,
         _new_children
       );
+    },
+    
+    // 数据
+    initData(data) {
+      let _data = data || [];
+      // _data = this.fitlerData(_data);
+      // 生成一维数据
+      this.self_data_list = flattenDeep(_data, this.selfProps.children);
+      // 处理源数据合法性
+      this.handleData(_data);
+      // 处理前置依赖
+      this.handleDependentStore();
+
+      _data.forEach(row => {
+        const {left,width} = this.makeLeftWidth(row)
+        this.$set(row,'left',left)
+        this.$set(row,'width',width)
+        if(row.children && row.children.length > 0){
+          row.children.forEach(item => {
+            const {left,width} = this.makeLeftWidth(item)
+            this.$set(item,'left',left)
+            this.$set(item,'width',width)
+            if(item.children && item.children.length > 0){
+              item.children.forEach(sitem => {
+                const {left,width} = this.makeLeftWidth(sitem)
+                this.$set(sitem,'left',left)
+                this.$set(sitem,'width',width)
+              })
+            }
+          })
+        }
+      })
+      return _data;
+    },
+    /** */
+    makeLeftWidth(row){
+      const startDate = new Date(row.startDate)
+      const endDate = new Date(row.endDate)
+      const totalwidth = this.getPosition(this.objstartDate,this.objendDate)
+      let left = this.getPosition(this.objstartDate,startDate)
+      let width = this.getPosition(startDate,endDate);
+      left = left<0?0:left
+      width = width+left > totalwidth ? totalwidth-left : width
+      return {left,width}
+    },
+    /**
+     * 排除起止时间之外的数据
+     */
+    fitlerData(data){
+      return data.filter(row => {
+        if(row.children && row.children.length > 0){
+          row.children = row.children.filter(item => {
+            if(item.children && item.children.length > 0){
+              item.children = item.children.filter(sitem => {
+                return !(Date.parse(sitem.startDate) > this.objendDate.getTime() ||  Date.parse(sitem.endDate) < this.objstartDate.getTime())
+              })
+            }
+            return !(Date.parse(item.startDate) > this.objendDate.getTime() ||  Date.parse(item.endDate) < this.objstartDate.getTime())
+          })
+        }
+        return !(Date.parse(row.startDate) > this.objendDate.getTime() ||  Date.parse(row.endDate) < this.objstartDate.getTime())
+      })
     }
   },
   watch: {
     dateType(val) {
       this.self_date_type = val;
+      this.selfData = this.initData(this.$props.data)
     },
     startDate(val) {
       this.self_start_date = val;
+      this.selfData = this.initData(this.$props.data)
     },
     endDate(val) {
       this.self_end_date = val;
+      this.selfData = this.initData(this.$props.data)
+    },
+    data(val) {
+      this.selfData = this.initData(val);
+    },
+    cellwidth(val){
+      console.log(val)
+      this.selfData = this.initData(this.$props.data)
     }
   },
   created() {
     this.self_date_type = this.dateType;
     this.self_start_date = this.startDate;
     this.self_end_date = this.endDate;
+    this.selfData = this.initData(this.$props.data)
   }
 };
 </script>
@@ -1702,7 +1934,7 @@ $gantt_item_half: 8px;
   }
 
   // 计划时间gantt开始
-  .wn-item-on {
+  .wl-item-on {
     position: absolute;
     top: 50%;
     left: 0;
@@ -1713,7 +1945,7 @@ $gantt_item_half: 8px;
     transition: all 0.4s;
   }
 
-  .wn-item-start {
+  .wl-item-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1729,7 +1961,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-item-end {
+  .wl-item-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1745,7 +1977,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-item-full {
+  .wl-item-full {
     left: 0;
     right: 0;
     &:before {
@@ -1776,7 +2008,7 @@ $gantt_item_half: 8px;
   // 计划时间gantt结束
 
   // 实际时间gantt开始
-  .wn-real-on {
+  .wl-real-on {
     position: absolute;
     top: 70%;
     left: 0;
@@ -1786,7 +2018,7 @@ $gantt_item_half: 8px;
     background: #faa792; //rgba(250, 167, 146, .6);
     transition: all 0.4s;
   }
-  .wn-real-start {
+  .wl-real-start {
     left: 50%;
     &:after {
       position: absolute;
@@ -1802,7 +2034,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-real-end {
+  .wl-real-end {
     right: 50%;
     &:after {
       position: absolute;
@@ -1818,7 +2050,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-real-full {
+  .wl-real-full {
     left: 0;
     right: 0;
     &:before {
@@ -1847,7 +2079,7 @@ $gantt_item_half: 8px;
     }
   }
   // 实际时间gantt结束
-
+gt 
   // 名称列
   .name-col {
     position: relative;
@@ -1877,7 +2109,7 @@ $gantt_item_half: 8px;
 }
 
 .year-and-month {
-  .wn-item-start {
+  .wl-item-start {
     left: 5%;
     &:after {
       position: absolute;
@@ -1893,7 +2125,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-item-end {
+  .wl-item-end {
     right: 5%;
     &:after {
       position: absolute;
@@ -1909,7 +2141,7 @@ $gantt_item_half: 8px;
     }
   }
 
-  .wn-item-full {
+  .wl-item-full {
     left: 5%;
     right: 5%;
     &:before {
@@ -1938,4 +2170,38 @@ $gantt_item_half: 8px;
     }
   }
 }
+
+.gantt{
+  position: absolute;
+  height: 20px;
+  top: 50%;
+  margin-top: -10px;
+  z-index: 1;
+  .gantt-bar{
+    width: 100%;
+    height: 100%;
+    color: white;
+    position: relative;
+    padding-left: 10px;
+    user-select:none;
+    .controller{
+      width: 0;
+      height: 0;
+      border-width:10px;
+      border-style: solid;
+      border-color: transparent transparent #999999 transparent;
+      z-index: 99;
+      position: absolute;
+      bottom: 0
+    }
+    .left{
+      left: -10px;
+    }
+    .right{
+      right: -10px;
+    }
+  }
+  
+}
+
 </style>
